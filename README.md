@@ -2,7 +2,7 @@
 
 Prerequisites
 
-- VirtualBox + Vagrant installed
+- [Vagrant](https://www.vagrantup.com/) + [VirtualBox](https://www.virtualbox.org/)
 
 Given:
 
