@@ -46,7 +46,7 @@ Therefor you can follow the progress of services booting when logging on to a co
 
 - clean up exited containers
 - make jenkins and docker registry data persistent 
-- sonar, xlrelease, xlview 
+- sonar, xlrelease, xlview, tc server 
 
 ## Config 
 
