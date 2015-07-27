@@ -98,6 +98,6 @@ To apply changes to ```*.user-data``` reload vagrant provisioning:
 
 ## Todo
 
-- sonar, xlrelease, xlview, tc server 
+- sonar, tc server 
 - make jenkins and docker registry data persistent 
 - automatically replace token in ```*.user-data``` file
