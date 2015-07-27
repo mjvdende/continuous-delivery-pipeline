@@ -6,8 +6,8 @@ Prerequisites
 
 Given:
 
-    git clone https://github.com/mjvdende/continuous-delivery-pipeline.git 
-    cd continuous-delivery-pipeline
+    $ git clone https://github.com/mjvdende/continuous-delivery-pipeline.git 
+    $ cd continuous-delivery-pipeline
 
 When:
 
@@ -67,9 +67,8 @@ More about using [cloud-config](https://coreos.com/os/docs/latest/cloud-config.h
 There is optional shared folder setup.
 You can try it out by adding a section to your Vagrantfile like this.
 
-```
-config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
-```
+    config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
+
 ### Add a Service
 
 You can add a serivce yourself to one of the ```*.user-data``` config files. 
