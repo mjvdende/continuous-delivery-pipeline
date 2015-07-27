@@ -4,7 +4,7 @@ Vagrant.require_version ">= 1.6.0"
 
 CLOUD_CONFIG_CORE01_PATH = File.join(File.dirname(__FILE__), "core01.user-data")
 CLOUD_CONFIG_CORE02_PATH = File.join(File.dirname(__FILE__), "core02.user-data")
-CLOUD_CONFIG_SLAVE_PATH = File.join(File.dirname(__FILE__), "slave.user-data")
+CLOUD_CONFIG_CORE03_PATH = File.join(File.dirname(__FILE__), "core03.user-data")
 CONFIG = File.join(File.dirname(__FILE__), "config.rb")
 
 # Attempt to apply the deprecated environment variable NUM_INSTANCES to
@@ -90,7 +90,7 @@ Vagrant.configure("2") do |config|
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_CORE02_PATH}", :destination => "/tmp/vagrantfile-user-data"
       else
         # mesos slave
-        config.vm.provision :file, :source => "#{CLOUD_CONFIG_SLAVE_PATH}", :destination => "/tmp/vagrantfile-user-data"
+        config.vm.provision :file, :source => "#{CLOUD_CONFIG_CORE03_PATH}", :destination => "/tmp/vagrantfile-user-data"
       end
 
       config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
