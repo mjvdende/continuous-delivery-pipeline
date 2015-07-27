@@ -42,11 +42,9 @@ Therefor you can follow the progress of services booting when logging on to a co
 ### core-03
 
 - docker.service
-- TODO
 
 ### Todo
 
-- clean up exited containers
 - make jenkins and docker registry data persistent 
 - sonar, xlrelease, xlview, tc server 
 
@@ -62,7 +60,6 @@ There is optional shared folder setup.
 You can try it out by adding a section to your Vagrantfile like this.
 
 ```
-config.vm.network "private_network", ip: "172.17.8.150"
 config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
 ```
 
