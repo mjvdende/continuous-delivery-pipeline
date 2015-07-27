@@ -77,7 +77,7 @@ To apply changes to ```*.user-data``` reload vagrant provisioning:
 
 To start our cluster, we need to provide some config parameters in cloud-config format via the ```*.user-data``` file and set the number of machines in the cluster in ```config.rb```.
 For each core a user-data file exists. Our cluster will use an etcd discovery URL to bootstrap the cluster of machines and elect an initial etcd leader. 
-Be sure to replace <token> with your own URL from https://discovery.etcd.io/new in each ```*.user-data file```. More info: [coreos - vagrant](https://github.com/coreos/coreos-vagrant)
+Be sure to replace <token> with your own URL from https://discovery.etcd.io/new in each ```*.user-data file```.
 
     coreos:
         etcd2:
