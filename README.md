@@ -86,7 +86,7 @@ Be sure to replace <token> with your own URL from https://discovery.etcd.io/new 
             # WARNING: replace each time you 'vagrant destroy'
             discovery: https://discovery.etcd.io/<token>
 
-#### Shared Folder Setup
+### Shared Folder Setup
 
 There is optional shared folder setup.
 You can try it out by adding a section to your Vagrantfile like this.
