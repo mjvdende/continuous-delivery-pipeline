@@ -42,6 +42,8 @@ Therefor you can follow the progress of services booting when logging on to a co
 ### core-03
 - docker.service
 - xlview.service - URL: http://172.17.8.103:6516
+- sonarqube.service - URL: http://172.17.8.103:9000
+- tomcat.service - URL: http://172.17.8.103:8180
 
 ## Config 
 

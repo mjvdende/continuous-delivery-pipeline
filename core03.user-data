@@ -51,3 +51,40 @@ coreos:
                          --name="xlview" \
                          mjvdende/docker-xlview
         ExecStop=/usr/bin/docker stop xlview
+    - name: sonarqube.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=SonarQube
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/usr/bin/docker kill sonarqube
+        ExecStartPre=-/usr/bin/docker rm sonarqube
+        ExecStart=/usr/bin/docker run \
+                         -p 9000:9000 \
+                         -p 9092:9092 \
+                         --name="sonarqube" \
+                         sonarqube
+        ExecStop=/usr/bin/docker stop sonarqube
+    - name: tomcat.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Tomcat
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/usr/bin/docker kill tomcat
+        ExecStartPre=-/usr/bin/docker rm tomcat
+        ExecStart=/usr/bin/docker run \
+                         -p 8180:8080 \
+                         --name="tomcat" \
+                         tomcat
+        ExecStop=/usr/bin/docker stop tomcat
