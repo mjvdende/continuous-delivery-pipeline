@@ -6,8 +6,8 @@ Prerequisites
 
 Given:
 
-    git clone https://github.com/xebia/xta-dynamic-builds.git 
-    cd coreos-vagrant
+    git clone https://github.com/mjvdende/continuous-delivery-pipeline.git 
+    cd continuous-delivery-pipeline
 
 When:
 
