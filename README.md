@@ -71,11 +71,6 @@ To apply changes to ```*.user-data``` reload vagrant provisioning:
 
     vagrant reload --provision
 
-### Todo
-
-- make jenkins and docker registry data persistent 
-- sonar, xlrelease, xlview, tc server 
-
 ## Config 
 
 To start our cluster, we need to provide some config parameters in cloud-config format via the ```user-data``` file and set the number of machines in the cluster in ```config.rb```.
@@ -91,3 +86,7 @@ You can try it out by adding a section to your Vagrantfile like this.
 config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
 ```
 
+## Todo
+
+- sonar, xlrelease, xlview, tc server 
+- make jenkins and docker registry data persistent 
