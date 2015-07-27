@@ -43,6 +43,34 @@ Therefor you can follow the progress of services booting when logging on to a co
 
 - docker.service
 
+## Add a Service
+
+You can add a serivce yourself to one of the ```*.user-data``` config files. 
+Have a look at already defined services for examples. 
+
+    - name: xldeploy.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=XL Deploy
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/usr/bin/docker kill xldeploy
+        ExecStartPre=-/usr/bin/docker rm xldeploy
+        ExecStart=/usr/bin/docker run \
+                         -p 4516:4516 \
+                         --name="xldeploy" \
+                         mjvdende/docker-xldeploy
+        ExecStop=/usr/bin/docker stop xldeploy
+
+To apply changes to ```*.user-data``` reload vagrant provisioning: 
+
+    vagrant reload --provision
+
 ### Todo
 
 - make jenkins and docker registry data persistent 
