@@ -33,3 +33,21 @@ coreos:
 
         [Install]
         WantedBy=sockets.target
+    - name: xlview.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=XL View
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/usr/bin/docker kill xlview
+        ExecStartPre=-/usr/bin/docker rm xlview
+        ExecStart=/usr/bin/docker run \
+                         -p 6516:6516 \
+                         --name="xlview" \
+                         mjvdende/docker-xlview
+        ExecStop=/usr/bin/docker stop xlview

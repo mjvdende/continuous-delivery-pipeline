@@ -40,8 +40,8 @@ Therefor you can follow the progress of services booting when logging on to a co
 - artifactory.service - URL: http://172.17.8.102:8081
 
 ### core-03
-
 - docker.service
+- xlview.service - URL: http://172.17.8.103:6516
 
 ## Config 
 
