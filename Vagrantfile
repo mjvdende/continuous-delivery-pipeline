@@ -83,13 +83,10 @@ Vagrant.configure("2") do |config|
       end
 
       if i == 1
-        # mesos master, docker registry service & web, marathon
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_CORE01_PATH}", :destination => "/tmp/vagrantfile-user-data"
       elsif i == 2
-        # mesos slave, jenkins
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_CORE02_PATH}", :destination => "/tmp/vagrantfile-user-data"
       else
-        # mesos slave
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_CORE03_PATH}", :destination => "/tmp/vagrantfile-user-data"
       end
 
