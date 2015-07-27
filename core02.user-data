@@ -70,3 +70,21 @@ coreos:
                          --name="xldeploy" \
                          mjvdende/docker-xldeploy
         ExecStop=/usr/bin/docker stop xldeploy
+    - name: artifactory.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Artifactory
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/usr/bin/docker kill artifactory
+        ExecStartPre=-/usr/bin/docker rm artifactory
+        ExecStart=/usr/bin/docker run \
+                         -p 8081:8080 \
+                         --name="artifactory" \
+                         mattgruter/artifactory
+        ExecStop=/usr/bin/docker stop artifactory

@@ -37,6 +37,7 @@ Therefor you can follow the progress of services booting when logging on to a co
 - docker.service
 - jenkins.service - URL: http://172.17.8.102:8888
 - xldeploy.service - URL: http://172.17.8.102:4516
+- artifactory.service - URL: http://172.17.8.102:8081
 
 ### core-03
 

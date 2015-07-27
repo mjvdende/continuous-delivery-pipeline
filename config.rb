@@ -32,8 +32,8 @@ $expose_docker_tcp=2375
 
 # Setting for VirtualBox VMs
 $vb_gui = false
-$vb_memory = 1048
-$vb_cpus = 1
+$vb_memory = 2048
+$vb_cpus = 2
 
 # Share additional folders to the CoreOS VMs
 # For example,
