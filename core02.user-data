@@ -52,3 +52,21 @@ coreos:
                          --name="ci-jenkins" \
                          jenkins
         ExecStop=/usr/bin/docker stop jenkins
+    - name: xldeploy.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=XL Deploy
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/usr/bin/docker kill xldeploy
+        ExecStartPre=-/usr/bin/docker rm xldeploy
+        ExecStart=/usr/bin/docker run \
+                         -p 4516:4516 \
+                         --name="xldeploy" \
+                         jenkins
+        ExecStop=/usr/bin/docker stop xldeploy
