@@ -44,4 +44,4 @@ $vb_cpus = 2
 $share_home = false
 
 # Enable port forwarding from guest(s) to host machine, syntax is: { 80 => 8080 }, auto correction is enabled by default.
-$forwarded_ports = {2375 => 2377}
+$forwarded_ports = {}
