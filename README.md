@@ -99,4 +99,4 @@ config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mou
 
 - sonar, xlrelease, xlview, tc server 
 - make jenkins and docker registry data persistent 
-- automatically replace <token> in ```*.user-data``` file
+- automatically replace token in ```*.user-data``` file
