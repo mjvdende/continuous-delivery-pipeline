@@ -73,9 +73,18 @@ To apply changes to ```*.user-data``` reload vagrant provisioning:
 
 ## Config 
 
-To start our cluster, we need to provide some config parameters in cloud-config format via the ```user-data``` file and set the number of machines in the cluster in ```config.rb```.
+### Cloud-Config
+
+To start our cluster, we need to provide some config parameters in cloud-config format via the ```*.user-data``` file and set the number of machines in the cluster in ```config.rb```.
 For each core a user-data file exists. Our cluster will use an etcd discovery URL to bootstrap the cluster of machines and elect an initial etcd leader. 
-Be sure to replace <token> with your own URL from https://discovery.etcd.io/new in each user-data file. More info: [coreos - vagrant](https://github.com/coreos/coreos-vagrant)
+Be sure to replace <token> with your own URL from https://discovery.etcd.io/new in each ```*.user-data file```. More info: [coreos - vagrant](https://github.com/coreos/coreos-vagrant)
+
+    coreos:
+        etcd2:
+            # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=3
+            # specify the initial size of your cluster with ?size=X
+            # WARNING: replace each time you 'vagrant destroy'
+            discovery: https://discovery.etcd.io/<token>
 
 #### Shared Folder Setup
 
@@ -90,3 +99,4 @@ config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mou
 
 - sonar, xlrelease, xlview, tc server 
 - make jenkins and docker registry data persistent 
+- automatically replace <token> in ```*.user-data``` file
