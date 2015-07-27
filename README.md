@@ -43,7 +43,32 @@ Therefor you can follow the progress of services booting when logging on to a co
 
 - docker.service
 
-## Add a Service
+## Config 
+
+### Cloud-Config
+
+To start our cluster, we need to provide some config parameters in cloud-config format via the ```*.user-data``` file and set the number of machines in the cluster in ```config.rb```.
+For each core a user-data file exists. Our cluster will use an etcd discovery URL to bootstrap the cluster of machines and elect an initial etcd leader. 
+Be sure to replace <token> with your own URL from https://discovery.etcd.io/new in each ```*.user-data file```.
+
+    coreos:
+        etcd2:
+            # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=3
+            # specify the initial size of your cluster with ?size=X
+            # WARNING: replace each time you 'vagrant destroy'
+            discovery: https://discovery.etcd.io/<token>
+
+More about using [cloud-config](https://coreos.com/os/docs/latest/cloud-config.html)
+
+### Shared Folder Setup
+
+There is optional shared folder setup.
+You can try it out by adding a section to your Vagrantfile like this.
+
+```
+config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
+```
+### Add a Service
 
 You can add a serivce yourself to one of the ```*.user-data``` config files. 
 Have a look at already defined services for examples. 
@@ -70,30 +95,6 @@ Have a look at already defined services for examples.
 To apply changes to ```*.user-data``` reload vagrant provisioning: 
 
     vagrant reload --provision
-
-## Config 
-
-### Cloud-Config
-
-To start our cluster, we need to provide some config parameters in cloud-config format via the ```*.user-data``` file and set the number of machines in the cluster in ```config.rb```.
-For each core a user-data file exists. Our cluster will use an etcd discovery URL to bootstrap the cluster of machines and elect an initial etcd leader. 
-Be sure to replace <token> with your own URL from https://discovery.etcd.io/new in each ```*.user-data file```.
-
-    coreos:
-        etcd2:
-            # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=3
-            # specify the initial size of your cluster with ?size=X
-            # WARNING: replace each time you 'vagrant destroy'
-            discovery: https://discovery.etcd.io/<token>
-
-### Shared Folder Setup
-
-There is optional shared folder setup.
-You can try it out by adding a section to your Vagrantfile like this.
-
-```
-config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
-```
 
 ## Todo
 
