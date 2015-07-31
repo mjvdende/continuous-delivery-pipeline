@@ -1,5 +1,8 @@
 # Continuous Delivery Pipeline 
 
+_This clusters is configured to use a significant amount of resources. 
+Current set up allocats 6 CPU and 6 GB of memory._
+
 Prerequisites
 
 - [Vagrant](https://www.vagrantup.com/) + [VirtualBox](https://www.virtualbox.org/)
@@ -17,13 +20,15 @@ Then:
 
     start building!
 
-It can take a while before services are running because docker is downloading images from the docker hub.
+It can take a while before services are started because docker is downloading images from the docker hub.
 Therefor you can follow the progress of services booting when logging on to a core, for example core-02.
 
     $ vagrant ssh core-02
     $ journalctl -u jenkins.service -f
 
 ## Services Provided
+
+_Once a sevice is started below links will point to your local instance of the running service._
 
 ### core-01
 
@@ -92,4 +97,7 @@ To apply changes to ```*.user-data``` reload vagrant provisioning:
 
 ## Todo
 
+- jenkins install plugins git, maven release, sonarqube and xldeploy
+- add petclinic jenkins job
+- sonarqube build breaker plugin
 - automatically replace token in ```*.user-data``` file
