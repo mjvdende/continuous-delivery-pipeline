@@ -41,6 +41,7 @@ coreos:
         Description=Jenkins
         After=docker.service
         Requires=docker.service
+        Requires=jenkins\x2ddata.mount
 
         [Service]
         TimeoutStartSec=0

@@ -15,7 +15,7 @@ $num_instances=3
 $image_version = "current"
 
 # Official CoreOS channel from which updates should be downloaded
-$update_channel='stable'
+$update_channel='beta'
 
 # Log the serial consoles of CoreOS VMs to log/
 # Enable by setting value to true, disable with false
