@@ -28,22 +28,22 @@ Therefor you can follow the progress of services booting when logging on to a co
 ### core-01
 
 - docker.service
-- docker-registry.service - URL: http://172.17.8.101:5000
-- docker-registry-web.service - URL: http://172.17.8.101:8181
-- gitbucket.service - URL: http://172.17.8.101:8282 (login:root-root)
+- docker-registry.service - URL: [Docker Registry](http://172.17.8.101:5000)
+- docker-registry-web.service - URL: [Docker Registry Web](http://172.17.8.101:8181)
+- gitbucket.service - URL: [GitBucket](http://172.17.8.101:8282) (login:root-root)
 
 ### core-02
 
 - docker.service
-- jenkins.service - URL: http://172.17.8.102:8888
-- xldeploy.service - URL: http://172.17.8.102:4516
-- artifactory.service - URL: http://172.17.8.102:8081
+- jenkins.service - URL: [Jenkins](http://172.17.8.102:8888)
+- xldeploy.service - URL: [XL Deploy](http://172.17.8.102:4516)
+- artifactory.service - URL: [Artifactory](http://172.17.8.102:8081)
 
 ### core-03
 - docker.service
-- xlview.service - URL: http://172.17.8.103:6516
-- sonarqube.service - URL: http://172.17.8.103:9000
-- tomcat.service - URL: http://172.17.8.103:8180
+- xlview.service - URL: [XL View](http://172.17.8.103:6516)
+- sonarqube.service - URL: [SonarQube](http://172.17.8.103:9000)
+- tomcat.service - URL: [Tomcat](http://172.17.8.103:8180)
 
 ## Config 
 
@@ -61,13 +61,6 @@ Be sure to replace <token> with your own URL from https://discovery.etcd.io/new 
             discovery: https://discovery.etcd.io/<token>
 
 More about using [cloud-config](https://coreos.com/os/docs/latest/cloud-config.html)
-
-### Shared Folder Setup
-
-There is optional shared folder setup.
-You can try it out by adding a section to your Vagrantfile like this.
-
-    config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true,  :mount_options   => ['nolock,vers=3,udp']
 
 ### Add a Service
 

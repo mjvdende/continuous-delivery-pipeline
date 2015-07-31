@@ -48,10 +48,10 @@ coreos:
         ExecStartPre=-/usr/bin/docker rm ci-jenkins
         ExecStart=/usr/bin/docker run \
                          -p 8888:8080 \
-                         -v /var/jenkins_home \
+                         -v /jenkins-data:/var/jenkins_home \
                          --name="ci-jenkins" \
                          jenkins
-        ExecStop=/usr/bin/docker stop jenkins
+        ExecStop=/usr/bin/docker stop ci-jenkins
     - name: xldeploy.service
       command: start
       enable: true
