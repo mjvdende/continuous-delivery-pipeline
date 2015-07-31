@@ -92,5 +92,4 @@ To apply changes to ```*.user-data``` reload vagrant provisioning:
 
 ## Todo
 
-- make jenkins and docker registry data persistent 
 - automatically replace token in ```*.user-data``` file
