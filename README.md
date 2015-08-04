@@ -46,7 +46,7 @@ _Once a sevice is started below links will point to your local instance of the r
 
 ### core-03
 - docker.service
-- xlvtestiew.service - URL: [XL View](http://172.17.8.103:6516)
+- xlvtestiew.service - URL: [XL Test View](http://172.17.8.103:6516)
 - sonarqube.service - URL: [SonarQube](http://172.17.8.103:9000)
 - tomcat.service - URL: [Tomcat](http://172.17.8.103:8180)
 
