@@ -7,20 +7,6 @@ CLOUD_CONFIG_CORE02_PATH = File.join(File.dirname(__FILE__), "core02.user-data")
 CLOUD_CONFIG_CORE03_PATH = File.join(File.dirname(__FILE__), "core03.user-data")
 CONFIG = File.join(File.dirname(__FILE__), "config.rb")
 
-$aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
-$aws_ami = "ami-aa85dbdd"
-$aws_availability_zone = nil
-$aws_elastic_ips = {}
-$aws_instance_type = "m3.large"
-$aws_keypair_name = ENV['AWS_KEYPAIR_NAME'] || "Training"
-$aws_keypair_path = '~/.ssh/id_rsa'
-$aws_region = "eu-west-1"
-$aws_rootfs_size = 32
-$aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-$aws_security_groups = ["Training"]
-$aws_slave_group = nil
-$aws_subnet_id = nil
-
 # Attempt to apply the deprecated environment variable NUM_INSTANCES to
 # $num_instances while allowing config.rb to override it
 if ENV["NUM_INSTANCES"].to_i > 0 && ENV["NUM_INSTANCES"]
@@ -35,6 +21,7 @@ Vagrant.configure("2") do |config|
   # always use Vagrants insecure key
   config.ssh.insert_key = false
 
+  config.vm.box = "coreos-%s" % $update_channel
   if $image_version != "current"
       config.vm.box_version = $image_version
   end
@@ -46,33 +33,6 @@ Vagrant.configure("2") do |config|
     # in CoreOS, so tell Vagrant that so it can be smarter.
     v.check_guest_additions = false
     v.functional_vboxsf     = false
-  end
-
-  config.vm.provider :aws do |aws, override|
-
-    aws.region_config $aws_region do |region|
-      region.ebs_optimzed = true
-    end
-
-    config.vm.box = "dummy"
-    config.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
-    config.vm.synced_folder ".", "/vagrant", disabled: true
-
-    aws.access_key_id = $aws_access_key_id
-    aws.ami = $aws_ami
-    aws.instance_type = $aws_instance_type
-    aws.keypair_name = $aws_keypair_name
-    aws.region = $aws_region
-    aws.secret_access_key = $aws_secret_access_key
-    aws.security_groups = $aws_security_groups
-    aws.subnet_id = $aws_subnet_id
-
-    # Store root filesystem on SSD and increase its size to be able to store the docker images and volumes
-    #  http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_EbsBlockDevice.html
-    aws.block_device_mapping = [{ 'DeviceName' => '/dev/xvda', 'Ebs.VolumeType' => 'gp2', 'Ebs.VolumeSize' => $aws_rootfs_size }]
-
-    override.ssh.private_key_path = $aws_keypair_path
-    override.ssh.insert_key = false
   end
 
   # plugin conflict
@@ -126,12 +86,6 @@ Vagrant.configure("2") do |config|
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_CORE02_PATH}", :destination => "/tmp/vagrantfile-user-data"
       else
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_CORE03_PATH}", :destination => "/tmp/vagrantfile-user-data"
-      end
-
-      config.vm.provider :aws do |aws, override|
-        aws.tags = {
-          'Name' => vm_name,
-        }
       end
 
       config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
