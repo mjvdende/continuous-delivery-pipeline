@@ -4,7 +4,7 @@ coreos:
   etcd2:
     # generate a new token for each unique cluster from https://discovery.etcd.io/new
     # WARNING: replace each time you 'vagrant destroy'
-    discovery: https://discovery.etcd.io/2c2b79910149efb1df99274a47180716
+    discovery: https://discovery.etcd.io/53ca8fb311e59dab8b7d65289997e037
     # multi-region and multi-cloud deployments need to use $public_ipv4
     advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001
     initial-advertise-peer-urls: http://$private_ipv4:2380
