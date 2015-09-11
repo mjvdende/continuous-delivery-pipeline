@@ -1,3 +1,6 @@
+require 'open-uri'
+require 'yaml'
+
 # Size of the CoreOS cluster created by Vagrant
 $num_instances=3
 
@@ -16,8 +19,6 @@ $new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
 token = open($new_discovery_url).read
 Dir.glob('*.user-data').each do |f|
 if File.exists?(f) && ARGV[0].eql?('up')
- require 'open-uri'
- require 'yaml'
 
  data = YAML.load(IO.readlines(f)[1..-1].join)
  if data['coreos'].key? 'etcd'

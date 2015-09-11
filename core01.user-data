@@ -92,4 +92,3 @@ coreos:
                        --name="git-gitbucket" \
                        f99aq8ove/gitbucket
       ExecStop=/usr/bin/docker stop git-gitbucket
-
