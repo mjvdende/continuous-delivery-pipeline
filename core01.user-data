@@ -1,99 +1,95 @@
 #cloud-config
 
+---
 coreos:
   etcd2:
-    # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    # WARNING: replace each time you 'vagrant destroy'
-    discovery: https://discovery.etcd.io/53ca8fb311e59dab8b7d65289997e037
-    # multi-region and multi-cloud deployments need to use $public_ipv4
+    discovery: https://discovery.etcd.io/bdde6b9baa1069c076e88ca74ae03147
     advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001
     initial-advertise-peer-urls: http://$private_ipv4:2380
-    # listen on both the official ports and the legacy ports
-    # legacy ports can be omitted if your application doesn't depend on them
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
     listen-peer-urls: http://$private_ipv4:2380
   fleet:
     public-ip: $public_ipv4
   units:
-    - name: etcd2.service
-      command: start
-    - name: fleet.service
-      command: start
-    - name: docker-tcp.socket
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Docker Socket for the API
+  - name: etcd2.service
+    command: start
+  - name: fleet.service
+    command: start
+  - name: docker-tcp.socket
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Docker Socket for the API
 
-        [Socket]
-        ListenStream=2375
-        Service=docker.service
-        BindIPv6Only=both
+      [Socket]
+      ListenStream=2375
+      Service=docker.service
+      BindIPv6Only=both
 
-        [Install]
-        WantedBy=sockets.target
-    - name: docker-registry.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Docker Registry
-        After=docker.service
-        Requires=docker.service
+      [Install]
+      WantedBy=sockets.target
+  - name: docker-registry.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Docker Registry
+      After=docker.service
+      Requires=docker.service
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill registry
-        ExecStartPre=-/usr/bin/docker rm registry
-        ExecStartPre=-/usr/bin/mkdir -p /home/core/registry
-        ExecStart=/usr/bin/docker run \
-                         -e STORAGE_PATH=/registry \
-                         -e SEARCH_BACKEND=sqlalchemy \
-                         -e GUNICORN_OPTS=[--preload] \
-                         -v /home/core/registry:/registry \
-                         -p 5000:5000 \
-                         --name="registry" \
-                         registry
-        ExecStop=/usr/bin/docker stop registry
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill registry
+      ExecStartPre=-/usr/bin/docker rm registry
+      ExecStartPre=-/usr/bin/mkdir -p /home/core/registry
+      ExecStart=/usr/bin/docker run \
+                       -e STORAGE_PATH=/registry \
+                       -e SEARCH_BACKEND=sqlalchemy \
+                       -e GUNICORN_OPTS=[--preload] \
+                       -v /home/core/registry:/registry \
+                       -p 5000:5000 \
+                       --name="registry" \
+                       registry
+      ExecStop=/usr/bin/docker stop registry
+  - name: docker-registry-web.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Docker Registry Web UI
+      After=docker-registry.service
+      Requires=docker.service
 
-    - name: docker-registry-web.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Docker Registry Web UI
-        After=docker.service
-        Requires=docker.service
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill registry-web
+      ExecStartPre=-/usr/bin/docker rm registry-web
+      ExecStart=/usr/bin/docker run \
+                       -e ENV_DOCKER_REGISTRY_HOST=http://$public_ipv4 \
+                       -e ENV_DOCKER_REGISTRY_PORT=5000 \
+                       -p 8181:80 \
+                       --name="registry-web" \
+                       konradkleine/docker-registry-frontend
+      ExecStop=/usr/bin/docker stop registry-web
+  - name: gitbucket.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Docker GitBucket - a github clone
+      After=docker-registry-web.service
+      Requires=docker.service
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill registry-web
-        ExecStartPre=-/usr/bin/docker rm registry-web
-        ExecStart=/usr/bin/docker run \
-                         -e ENV_DOCKER_REGISTRY_HOST=http://$public_ipv4 \
-                         -e ENV_DOCKER_REGISTRY_PORT=5000 \
-                         -p 8181:80 \
-                         --name="registry-web" \
-                         konradkleine/docker-registry-frontend
-        ExecStop=/usr/bin/docker stop registry-web
-    - name: gitbucket.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Docker GitBucket - a github clone
-        After=docker.service
-        Requires=docker.service
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill git-gitbucket
+      ExecStartPre=-/usr/bin/docker rm git-gitbucket
+      ExecStart=/usr/bin/docker run \
+                       -v /gitbucket-data:/gitbucket \
+                       -p 29418:29418 \
+                       -p 8282:8080 \
+                       --name="git-gitbucket" \
+                       f99aq8ove/gitbucket
+      ExecStop=/usr/bin/docker stop git-gitbucket
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill git-gitbucket
-        ExecStartPre=-/usr/bin/docker rm git-gitbucket
-        ExecStart=/usr/bin/docker run \
-                         -v /gitbucket-data:/gitbucket \
-                         -p 29418:29418 \
-                         -p 8282:8080 \
-                         --name="git-gitbucket" \
-                         f99aq8ove/gitbucket
-        ExecStop=/usr/bin/docker stop git-gitbucket  

@@ -1,91 +1,87 @@
 #cloud-config
 
+---
 coreos:
   etcd2:
-    # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    # WARNING: replace each time you 'vagrant destroy'
-    discovery: https://discovery.etcd.io/53ca8fb311e59dab8b7d65289997e037
-    # multi-region and multi-cloud deployments need to use $public_ipv4
+    discovery: https://discovery.etcd.io/bdde6b9baa1069c076e88ca74ae03147
     advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001
     initial-advertise-peer-urls: http://$private_ipv4:2380
-    # listen on both the official ports and the legacy ports
-    # legacy ports can be omitted if your application doesn't depend on them
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
     listen-peer-urls: http://$private_ipv4:2380
   fleet:
     public-ip: $public_ipv4
   units:
-    - name: etcd2.service
-      command: start
-    - name: fleet.service
-      command: start
-    - name: docker-tcp.socket
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Docker Socket for the API
+  - name: etcd2.service
+    command: start
+  - name: fleet.service
+    command: start
+  - name: docker-tcp.socket
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Docker Socket for the API
 
-        [Socket]
-        ListenStream=2375
-        Service=docker.service
-        BindIPv6Only=both
+      [Socket]
+      ListenStream=2375
+      Service=docker.service
+      BindIPv6Only=both
 
-        [Install]
-        WantedBy=sockets.target
-    - name: jenkins.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Jenkins
-        After=docker.service
-        Requires=docker.service
-        Requires=jenkins\x2ddata.mount
+      [Install]
+      WantedBy=sockets.target
+  - name: jenkins.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Jenkins
+      After=docker.service
+      Requires=docker.service
+      Requires=jenkins\x2ddata.mount
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill ci-jenkins
-        ExecStartPre=-/usr/bin/docker rm ci-jenkins
-        ExecStart=/usr/bin/docker run \
-                         -p 8888:8080 \
-                         -v /jenkins-data:/var/jenkins_home \
-                         --name="ci-jenkins" \
-                         jenkins
-        ExecStop=/usr/bin/docker stop ci-jenkins
-    - name: xldeploy.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=XL Deploy
-        After=docker.service
-        Requires=docker.service
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill ci-jenkins
+      ExecStartPre=-/usr/bin/docker rm ci-jenkins
+      ExecStart=/usr/bin/docker run \
+                       -p 8888:8080 \
+                       -v /jenkins-data:/var/jenkins_home \
+                       --name="ci-jenkins" \
+                       jenkins
+      ExecStop=/usr/bin/docker stop ci-jenkins
+  - name: xldeploy.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=XL Deploy
+      After=jenkins.service
+      Requires=docker.service
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill xldeploy
-        ExecStartPre=-/usr/bin/docker rm xldeploy
-        ExecStart=/usr/bin/docker run \
-                         -p 4516:4516 \
-                         --name="xldeploy" \
-                         mjvdende/docker-xldeploy
-        ExecStop=/usr/bin/docker stop xldeploy
-    - name: artifactory.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Artifactory
-        After=docker.service
-        Requires=docker.service
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill xldeploy
+      ExecStartPre=-/usr/bin/docker rm xldeploy
+      ExecStart=/usr/bin/docker run \
+                       -p 4516:4516 \
+                       --name="xldeploy" \
+                       mjvdende/docker-xldeploy
+      ExecStop=/usr/bin/docker stop xldeploy
+  - name: artifactory.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Artifactory
+      After=xldeploy.service
+      Requires=docker.service
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill artifactory
-        ExecStartPre=-/usr/bin/docker rm artifactory
-        ExecStart=/usr/bin/docker run \
-                         -p 8081:8080 \
-                         --name="artifactory" \
-                         mattgruter/artifactory
-        ExecStop=/usr/bin/docker stop artifactory
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill artifactory
+      ExecStartPre=-/usr/bin/docker rm artifactory
+      ExecStart=/usr/bin/docker run \
+                       -p 8081:8080 \
+                       --name="artifactory" \
+                       mattgruter/artifactory
+      ExecStop=/usr/bin/docker stop artifactory

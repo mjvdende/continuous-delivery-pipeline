@@ -1,90 +1,86 @@
 #cloud-config
 
+---
 coreos:
   etcd2:
-    # generate a new token for each unique cluster from https://discovery.etcd.io/new
-    # WARNING: replace each time you 'vagrant destroy'
-    discovery: https://discovery.etcd.io/53ca8fb311e59dab8b7d65289997e037
-    # multi-region and multi-cloud deployments need to use $public_ipv4
+    discovery: https://discovery.etcd.io/bdde6b9baa1069c076e88ca74ae03147
     advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001
     initial-advertise-peer-urls: http://$private_ipv4:2380
-    # listen on both the official ports and the legacy ports
-    # legacy ports can be omitted if your application doesn't depend on them
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
     listen-peer-urls: http://$private_ipv4:2380
   fleet:
     public-ip: $public_ipv4
   units:
-    - name: etcd2.service
-      command: start
-    - name: fleet.service
-      command: start
-    - name: docker-tcp.socket
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Docker Socket for the API
+  - name: etcd2.service
+    command: start
+  - name: fleet.service
+    command: start
+  - name: docker-tcp.socket
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Docker Socket for the API
 
-        [Socket]
-        ListenStream=2375
-        Service=docker.service
-        BindIPv6Only=both
+      [Socket]
+      ListenStream=2375
+      Service=docker.service
+      BindIPv6Only=both
 
-        [Install]
-        WantedBy=sockets.target
-    - name: xltestview.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=XL Test View
-        After=docker.service
-        Requires=docker.service
+      [Install]
+      WantedBy=sockets.target
+  - name: xltestview.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=XL Test View
+      After=docker.service
+      Requires=docker.service
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill xltestview
-        ExecStartPre=-/usr/bin/docker rm xltestview
-        ExecStart=/usr/bin/docker run \
-                         -p 6516:6516 \
-                         --name="xltestview" \
-                         mjvdende/docker-xltestview
-        ExecStop=/usr/bin/docker stop xltestview
-    - name: sonarqube.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=SonarQube
-        After=docker.service
-        Requires=docker.service
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill xltestview
+      ExecStartPre=-/usr/bin/docker rm xltestview
+      ExecStart=/usr/bin/docker run \
+                       -p 6516:6516 \
+                       --name="xltestview" \
+                       mjvdende/docker-xltestview
+      ExecStop=/usr/bin/docker stop xltestview
+  - name: sonarqube.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=SonarQube
+      After=xltestview.service
+      Requires=docker.service
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill sonarqube
-        ExecStartPre=-/usr/bin/docker rm sonarqube
-        ExecStart=/usr/bin/docker run \
-                         -p 9000:9000 \
-                         -p 9092:9092 \
-                         --name="sonarqube" \
-                         sonarqube
-        ExecStop=/usr/bin/docker stop sonarqube
-    - name: tomcat.service
-      command: start
-      enable: true
-      content: |
-        [Unit]
-        Description=Tomcat
-        After=docker.service
-        Requires=docker.service
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill sonarqube
+      ExecStartPre=-/usr/bin/docker rm sonarqube
+      ExecStart=/usr/bin/docker run \
+                       -p 9000:9000 \
+                       -p 9092:9092 \
+                       --name="sonarqube" \
+                       sonarqube
+      ExecStop=/usr/bin/docker stop sonarqube
+  - name: tomcat.service
+    command: start
+    enable: true
+    content: |
+      [Unit]
+      Description=Tomcat
+      After=sonarqube.service
+      Requires=docker.service
 
-        [Service]
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill tomcat
-        ExecStartPre=-/usr/bin/docker rm tomcat
-        ExecStart=/usr/bin/docker run \
-                         -p 8180:8080 \
-                         --name="tomcat" \
-                         tomcat
-        ExecStop=/usr/bin/docker stop tomcat
+      [Service]
+      TimeoutStartSec=0
+      ExecStartPre=-/usr/bin/docker kill tomcat
+      ExecStartPre=-/usr/bin/docker rm tomcat
+      ExecStart=/usr/bin/docker run \
+                       -p 8180:8080 \
+                       --name="tomcat" \
+                       tomcat
+      ExecStop=/usr/bin/docker stop tomcat

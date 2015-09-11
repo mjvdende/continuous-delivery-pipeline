@@ -13,13 +13,13 @@ $new_discovery_url="https://discovery.etcd.io/new?size=#{$num_instances}"
 # the lines below:
 
 # TODO automatically replace token in ```*.user-data``` file
-if File.exists?('user-data') && ARGV[0].eql?('up')
+token = open($new_discovery_url).read
+Dir.glob('*.user-data').each do |f|
+if File.exists?(f) && ARGV[0].eql?('up')
  require 'open-uri'
  require 'yaml'
 
- token = open($new_discovery_url).read
-
- data = YAML.load(IO.readlines('user-data')[1..-1].join)
+ data = YAML.load(IO.readlines(f)[1..-1].join)
  if data['coreos'].key? 'etcd'
    data['coreos']['etcd']['discovery'] = token
  end
@@ -28,7 +28,8 @@ if File.exists?('user-data') && ARGV[0].eql?('up')
  end
 
  yaml = YAML.dump(data)
- File.open('user-data', 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
+ File.open(f, 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
+end
 end
 
 # Change the version of CoreOS to be installed
